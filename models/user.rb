@@ -2,10 +2,10 @@ class User < Neography::Node
   @neo_server = settings.neo
 
   def self.find_by_uid(uid)
-    user = @neo_server.get_node_index("users_index", "uid", uid).first
+    user = @neo_server.get_node_index("users_index", "uid", uid)
 
     if user
-      self.new(user)
+      self.new(user.first)
     else
       nil
     end
