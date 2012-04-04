@@ -26,3 +26,4 @@ You will need to get a Twitter Consumer Key and Secret on https://dev.twitter.co
   heroku addons:add neo4j
   git push heroku master
 
+See it running live at http://neotweet.herokuapp.com
