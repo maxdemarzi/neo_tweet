@@ -11,6 +11,7 @@ You will need to get a Twitter Consumer Key and Secret on https://dev.twitter.co
 
   git clone git@github.com:maxdemarzi/neo_tweet.git
   bundle install
+  export SESSION_SECRET="A secret phrase"
   export CONSUMER_KEY="Your Twitter Consumer Key"
   export CONSUMER_SECRET="Your Twitter Consumer Secret"
   bundle exec rackup
@@ -19,6 +20,7 @@ You will need to get a Twitter Consumer Key and Secret on https://dev.twitter.co
 
   git clone git@github.com:maxdemarzi/neo_tweet.git
   heroku apps:create --stack cedar
+  heroku config:add SESSION_SECRET="A secret phrase"
   heroku config:add CONSUMER_KEY="Your Twitter Consumer Key"
   heroku config:add CONSUMER_SECRET="Your Twitter Consumer Secret"
   heroku addons:add neo4j

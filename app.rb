@@ -7,6 +7,7 @@ $LOAD_PATH.unshift(Dir.getwd)
 
 configure do
   enable :sessions
+  set :session_secret, ENV['SESSION_SECRET']
   set :key, ENV['CONSUMER_KEY']
   set :secret, ENV['CONSUMER_SECRET']
   set :neo, Neography::Rest.new
