@@ -1,0 +1,8 @@
+%img{:src => current_user.image_url}
+%p= "Hi #{current_user.nickname}"
+%p
+  %a{:href =>"/tweets"}= "#{@info["statuses_count"]} tweets"
+%p
+  %a{:href =>"/following"}= "#{@info["friends_count"]} following"
+%p
+  %a{:href =>"/followers"}= "#{@info["followers_count"]} followers"

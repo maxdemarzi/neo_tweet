@@ -1,0 +1,12 @@
+.timeline
+  - tweets.each do |t|
+    %p
+      .timeline_left
+        %a{:href => "/user/#{t["user"]["screen_name"]}"}
+          = t['user']['screen_name']        
+          %img{:src => t['user']['profile_image_url'], :width => 48, :height => 48}
+      .timeline_right
+        %a{:href => "/tweet/#{t["id"]}"}
+          = t.text
+      %br{:clear => "all"}
+

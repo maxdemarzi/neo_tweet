@@ -1,0 +1,12 @@
+== Welcome to Neo Tweet
+
+Neo Tweet is a sample application to build a twitter client using Neo4j.  It uses Sinatra and the Neography Gem.
+
+=== Installation
+
+  git clone 
+  bundle install
+  export CONSUMER_KEY="Your Twitter Consumer Key"
+  export CONSUMER_SECRET="Your Twitter Consumer Secret"
+  bundle exec rackup
+
