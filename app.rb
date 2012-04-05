@@ -11,9 +11,15 @@ configure do
   set :key, ENV['CONSUMER_KEY']
   set :secret, ENV['CONSUMER_SECRET']
   set :neo, Neography::Rest.new
+
+  uri = URI.parse(ENV["REDISTOGO_URL"])
+  Resque.redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+
 end
 
 require "models/user"
+require "workers/follows"
+require 'pp'
 
 use OmniAuth::Builder do
   provider :twitter, settings.key, settings.secret
@@ -32,6 +38,18 @@ helpers do
   def partial(name, options={})
     haml("_#{name.to_s}".to_sym, options.merge(:layout => false))
   end
+end
+
+def follower_matrix
+  neo = settings.neo
+  cypher_query =  " START a = node:users_index('uid:*')"
+  cypher_query << " MATCH a-[:follows]->b"
+  cypher_query << " RETURN a.name, collect(b.name)"
+  neo.execute_query(cypher_query)["data"]
+end  
+
+get '/follows' do
+  follower_matrix.map{|fm| {"name" => fm[0], "follows" => fm[1][1..(fm[1].size - 2)].split(", ")} }.to_json
 end
 
 get "/" do

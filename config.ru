@@ -1,2 +1,6 @@
 require File.expand_path("../app", __FILE__)
-run Sinatra::Application
+require 'resque/server'
+
+run Rack::URLMap.new \
+  "/"       => Sinatra::Application,
+  "/resque" => Resque::Server.new

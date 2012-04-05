@@ -4,7 +4,7 @@ class User < Neography::Node
   def self.find_by_uid(uid)
     user = @neo_server.get_node_index("users_index", "uid", uid)
 
-    if user
+    if user && user.first["data"]["token"]
       self.new(user.first)
     else
       nil
@@ -12,17 +12,19 @@ class User < Neography::Node
   end
 
   def self.create_with_omniauth(auth)
-    self.new(@neo_server.create_unique_node("users_index", "uid", auth.uid,
-                       {"name"      => auth.info.name,
-                        "nickname"  => auth.info.nickname,
-                        "location"  => auth.info.location,
-                        "image_url" => auth.info.image,
-                        "uid"       => auth.uid,
-                        "token"     => auth.credentials.token,
-                        "secret"    => auth.credentials.secret
-                        })) 
+    node = @neo_server.create_unique_node("users_index", "uid", auth.uid)
+    @neo_server.set_node_properties(node, 
+                                    {"name"       => auth.info.name,
+                                      "nickname"  => auth.info.nickname,
+                                      "location"  => auth.info.location,
+                                      "image_url" => auth.info.image,
+                                      "uid"       => auth.uid,
+                                      "token"     => auth.credentials.token, 
+                                      "secret"    => auth.credentials.secret})
+    user = User.load(node)
+    Resque.enqueue(Follows, user.uid)
+    user
   end
-
 
   def client
     @client ||= Twitter::Client.new(
@@ -30,5 +32,22 @@ class User < Neography::Node
       :oauth_token_secret => self.secret
      )
   end
+
+  def self.create_from_twitter(friend)
+    user = @neo_server.create_unique_node("users_index", "uid", friend.id,
+                       {"name"      => friend.name,
+                        "nickname"  => friend.screen_name,
+                        "location"  => friend.location,
+                        "image_url" => friend.profile_image_url,
+                        "uid"       => friend.id
+                        })
+    user
+  end
+
+#  def import_friends
+#    client.friend_ids.ids.each do |f|
+#      User.create_from_twitter(client.user(f))
+#    end
+#  end
 
 end
