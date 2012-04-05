@@ -4,18 +4,24 @@ module Follows
 
   def self.perform(uid)
     user = User.find_by_uid(uid)
-
     commands = [] 
+    cursor = "-1"
 
-    user.client.friend_ids.ids.each do |f|
-      friend = user.client.user(f)
-      commands << [:create_unique_node, "users_index", "uid", friend.id, 
-                   {"name"      => friend.name,
-                    "nickname"  => friend.screen_name,
-                    "location"  => friend.location,
-                    "image_url" => friend.profile_image_url,
-                    "uid"       => friend.id
-                    }]
+    while cursor != 0 do
+      friends = user.client.friend_ids({:cursor => cursor})
+      cursor = friends.next_cursor
+
+      friends.ids.each do |f|
+        friend = user.client.user(f)
+        commands << [:create_unique_node, "users_index", "uid", friend.id, 
+                     {"name"      => friend.name,
+                      "nickname"  => friend.screen_name,
+                      "location"  => friend.location,
+                      "image_url" => friend.profile_image_url,
+                      "uid"       => friend.id
+                      }]
+      end
+
     end
 
     batch_result = @neo.batch *commands
