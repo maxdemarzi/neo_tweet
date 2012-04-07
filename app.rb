@@ -11,6 +11,8 @@ configure do
   set :key, ENV['CONSUMER_KEY']
   set :secret, ENV['CONSUMER_SECRET']
   set :neo, Neography::Rest.new
+  set :apigee_api, 'http://' + ENV['APIGEE_TWITTER_API_ENDPOINT']
+  set :apigee_search_api, 'http://' + ENV['APIGEE_TWITTER_SEARCH_API_ENDPOINT']
 
   uri = URI.parse(ENV["REDISTOGO_URL"])
   Resque.redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
@@ -19,7 +21,6 @@ end
 
 require "models/user"
 require "workers/follows"
-require 'pp'
 
 use OmniAuth::Builder do
   provider :twitter, settings.key, settings.secret
@@ -28,6 +29,10 @@ end
 Twitter.configure do |config|
   config.consumer_key    = settings.key
   config.consumer_secret = settings.secret
+  config.endpoint        = settings.apigee_api
+  # config.gateway         = settings.apigee_api          # null in to string error
+  # config.gateway         = "http://twitter.apigee.com"  # null in to string error
+  # config.proxy           = "twitter.apigee.com"         # seems to ignore it and we get hit with the limit
 end
 
 helpers do

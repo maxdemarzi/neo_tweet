@@ -28,7 +28,9 @@ class User < Neography::Node
 
   def client
     @client ||= Twitter::Client.new(
-      :oauth_token => self.token,
+#      :endpoint           => settings.apigee_api,
+#      :search_endpoint    => settings.apigee_search_api,
+      :oauth_token        => self.token,
       :oauth_token_secret => self.secret
      )
   end
@@ -43,11 +45,5 @@ class User < Neography::Node
                         })
     user
   end
-
-#  def import_friends
-#    client.friend_ids.ids.each do |f|
-#      User.create_from_twitter(client.user(f))
-#    end
-#  end
 
 end

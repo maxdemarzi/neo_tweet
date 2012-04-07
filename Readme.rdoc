@@ -27,6 +27,7 @@ You will need Redis in order to use Resque for background jobs.
   heroku config:add CONSUMER_SECRET="Your Twitter Consumer Secret"
   heroku addons:add neo4j
   heroku addons:add redistogo
+  heroku addons:add apigee
   git push heroku master
 
 See it running live at http://neotweet.herokuapp.com
